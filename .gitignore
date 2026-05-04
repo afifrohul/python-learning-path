@@ -1,0 +1,31 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Sensitive data / Secret keys
+.env
+local_settings.py
+
+# Databases (standard SQLite default)
+db.sqlite3
+db.sqlite3-journal
+
+# Media and Static assets
+/media/
+/static/
+
+# IDE specific settings
+.vscode/
+.idea/
+*.swp
+
+# OS specific files
+.DS_Store
+Thumbs.db
