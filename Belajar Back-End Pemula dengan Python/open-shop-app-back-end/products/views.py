@@ -17,3 +17,15 @@ class ProductList(APIView):
     products = Product.objects.all()
     serializer = ProductSerializer(products, many=True, context={'request': request})
     return Response({"products": serializer.data}, status=status.HTTP_200_OK)
+
+class ProductDetail(APIView):
+  def get_object(self, pk):
+    try:
+      return Product.objects.get(pk=pk)
+    except Product.DoesNotExist:
+      raise Http404
+  
+  def get(self, request, pk):
+    product = self.get_object(pk)
+    serializer = ProductSerializer(product)
+    return Response(serializer.data)
