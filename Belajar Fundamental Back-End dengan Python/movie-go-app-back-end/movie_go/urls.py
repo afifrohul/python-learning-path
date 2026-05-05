@@ -22,4 +22,5 @@ urlpatterns = [
     path('api/', include('movies.urls')),
     path('api/', include('studios.urls')),
     path('api/', include('seats.urls')),
+    path('api/', include('showtimes.urls')),
 ]
