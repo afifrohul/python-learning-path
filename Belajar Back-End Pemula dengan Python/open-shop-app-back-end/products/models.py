@@ -17,3 +17,4 @@ class Product(models.Model):
   picture = models.TextField()
   createdAt = models.DateTimeField(auto_now_add=True)
   updatedAt = models.DateTimeField(auto_now=True)
+  is_delete = models.BooleanField(default=False)
