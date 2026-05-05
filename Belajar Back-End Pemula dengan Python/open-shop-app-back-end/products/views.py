@@ -14,7 +14,16 @@ class ProductList(APIView):
     return Response(product.errors, status=status.HTTP_400_BAD_REQUEST)
   
   def get(self, request):
-    products = Product.objects.all()
+
+    query_name = request.query_params.get('name') 
+    query_location = request.query_params.get('location')
+
+    if query_name:
+      products = Product.objects.filter(name__icontains=query_name)
+    elif query_location:
+      products = Product.objects.filter(location__icontains=query_location)
+    else:
+      products = Product.objects.all()
     serializer = ProductSerializer(products, many=True, context={'request': request})
     return Response({"products": serializer.data}, status=status.HTTP_200_OK)
 
