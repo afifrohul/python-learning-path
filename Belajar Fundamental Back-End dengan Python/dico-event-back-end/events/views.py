@@ -14,7 +14,7 @@ class EventListCreateView(APIView):
 
   def get_permissions(self):
     if self.request.method == 'POST':
-        return [IsAuthenticated(), IsAdminOrSuperUser()]
+      return [IsAuthenticated(), IsAdminOrSuperUser()]
     return [IsAuthenticated()]
   
   def get(self, request):
@@ -23,11 +23,11 @@ class EventListCreateView(APIView):
     return Response({'events': serializer.data})
   
   def post(self, request):
-     serialier = EventSerializer(data=request.data)
-     if serialier.is_valid():
-        serialier.save()
-        return Response(serialier.data, status=status.HTTP_201_CREATED)
-     return Response(serialier.errors, status=status.HTTP_400_BAD_REQUEST)
+    serialier = EventSerializer(data=request.data)
+    if serialier.is_valid():
+      serialier.save()
+      return Response(serialier.data, status=status.HTTP_201_CREATED)
+    return Response(serialier.errors, status=status.HTTP_400_BAD_REQUEST)
   
 class EventDetailView(APIView):
   authentication_classes = [JWTAuthentication]
