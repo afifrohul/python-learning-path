@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from core.models import User
 from seats.models import Seat
 from showtimes.models import Showtime
 import uuid

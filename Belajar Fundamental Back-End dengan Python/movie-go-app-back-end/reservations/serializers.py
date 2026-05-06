@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 from .models import Reservation, ReservedSeat, Showtime, Seat
-from django.contrib.auth.models import User
+from core.models import User
 class ReservationSerializer(serializers.HyperlinkedModelSerializer):
     _links = serializers.SerializerMethodField()
     user = serializers.CharField(source='user.username', read_only=True)

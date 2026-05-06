@@ -4,9 +4,20 @@ from rest_framework.views import APIView
 from .models import Studio, StudioManager
 from .serializers import StudioSerializer, StudioManagerSerializer
 from django.http import Http404
- 
+from core.permissions import IsAdminOrSuperUser
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 # Create your views here.
 class StudioListCreateView(APIView):
+
+    authentication_classes = [JWTAuthentication]
+
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            return [IsAuthenticated(), IsAdminOrSuperUser()]
+        return [IsAuthenticated()]
+
     def get(self, request):
         studios = Studio.objects.all().order_by('name')[:10]
         serializer = StudioSerializer(studios, many=True)
@@ -20,6 +31,14 @@ class StudioListCreateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
  
 class StudioDetailView(APIView):
+
+    authentication_classes = [JWTAuthentication]
+ 
+    def get_permissions(self):
+        if self.request.method != 'GET':
+            return [IsAuthenticated(), IsAdminOrSuperUser()]
+        return [IsAuthenticated()]
+
     def get_object(self, pk):
         try:
             studio = Studio.objects.get(pk=pk)
@@ -47,6 +66,14 @@ class StudioDetailView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
  
 class StudioManagerListCreateView(APIView):
+
+    authentication_classes = [JWTAuthentication]
+
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            return [IsAuthenticated(), IsAdminOrSuperUser()]
+        return [IsAuthenticated()]
+
     def get(self, request):
         studio_managers = StudioManager.objects.select_related('user', 'studio').all().order_by('user__username')[:10]
         serializer = StudioManagerSerializer(studio_managers, many=True)
@@ -60,6 +87,14 @@ class StudioManagerListCreateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
  
 class StudioManagerDetailView(APIView):
+
+    authentication_classes = [JWTAuthentication]
+ 
+    def get_permissions(self):
+        if self.request.method != 'GET':
+            return [IsAuthenticated(), IsAdminOrSuperUser()]
+        return [IsAuthenticated()]
+
     def get_object(self, pk):
         try:
             studio_manager = StudioManager.objects.get(pk=pk)

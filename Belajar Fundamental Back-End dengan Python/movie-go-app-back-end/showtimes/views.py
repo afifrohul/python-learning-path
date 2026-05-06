@@ -4,9 +4,20 @@ from rest_framework.views import APIView
 from .models import Showtime
 from .serializers import ShowtimeSerializer
 from django.http import Http404
+from core.permissions import IsAdminOrSuperUser
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
  
 # Create your views here.
 class ShowtimeListCreateView(APIView):
+
+    authentication_classes = [JWTAuthentication]
+
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            return [IsAuthenticated(), IsAdminOrSuperUser()]
+        return [IsAuthenticated()]
+
     def get(self, request):
         showtimes = Showtime.objects.all().order_by('start_time')[:10]
         serializer = ShowtimeSerializer(showtimes, many=True)
@@ -20,6 +31,14 @@ class ShowtimeListCreateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
  
 class ShowtimeDetailView(APIView):
+
+    authentication_classes = [JWTAuthentication]
+ 
+    def get_permissions(self):
+        if self.request.method != 'GET':
+            return [IsAuthenticated(), IsAdminOrSuperUser()]
+        return [IsAuthenticated()]
+    
     def get_object(self, pk):
         try:
             showtime = Showtime.objects.get(pk=pk)

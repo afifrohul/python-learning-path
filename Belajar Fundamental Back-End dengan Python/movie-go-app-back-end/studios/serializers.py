@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 from .models import Studio, StudioManager
-from django.contrib.auth.models import User
+from core.models import User
  
 class StudioSerializer(serializers.HyperlinkedModelSerializer):
     _links = serializers.SerializerMethodField()

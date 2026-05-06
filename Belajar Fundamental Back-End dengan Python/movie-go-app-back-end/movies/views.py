@@ -6,12 +6,17 @@ from rest_framework.permissions import IsAuthenticated
 from django.http import Http404
 from .models import Movie
 from .serializers import MovieSerializer
+from core.permissions import IsAdminOrSuperUser
  
 # Create your views here.
 class MovieListCreateView(APIView):
 
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            return [IsAuthenticated(), IsAdminOrSuperUser()]
+        return [IsAuthenticated()]
 
     def get(self, request):
         movies = Movie.objects.all().order_by('name')[:10]
@@ -26,6 +31,14 @@ class MovieListCreateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
  
 class MovieDetailView(APIView):
+
+    authentication_classes = [JWTAuthentication]
+ 
+    def get_permissions(self):
+        if self.request.method != 'GET':
+            return [IsAuthenticated(), IsAdminOrSuperUser()]
+        return [IsAuthenticated()]
+    
     def get_object(self, pk):
         try:
             movie = Movie.objects.get(pk=pk)
