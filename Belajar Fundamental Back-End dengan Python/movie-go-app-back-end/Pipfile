@@ -8,6 +8,7 @@ django = "==4.2"
 djangorestframework = "*"
 python-dotenv = "*"
 psycopg = {extras = ["binary"], version = "*"}
+djangorestframework-simplejwt = "*"
 
 [dev-packages]
 

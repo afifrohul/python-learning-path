@@ -1,12 +1,18 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.permissions import IsAuthenticated
 from django.http import Http404
 from .models import Movie
 from .serializers import MovieSerializer
  
 # Create your views here.
 class MovieListCreateView(APIView):
+
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
         movies = Movie.objects.all().order_by('name')[:10]
         serializer = MovieSerializer(movies, many=True)
