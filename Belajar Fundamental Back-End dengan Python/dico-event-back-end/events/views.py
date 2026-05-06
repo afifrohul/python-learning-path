@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.http import Http404
 from .models import Event
 from .serializers import EventSerializer
-from core.permissions import IsAdminOrSuperUser
+from core.permissions import IsOwnerOrAdminOrSuperUser
 
 # Create your views here.
 class EventListCreateView(APIView):
@@ -14,7 +14,7 @@ class EventListCreateView(APIView):
 
   def get_permissions(self):
     if self.request.method == 'POST':
-      return [IsAuthenticated(), IsAdminOrSuperUser()]
+      return [IsAuthenticated(), IsOwnerOrAdminOrSuperUser()]
     return [IsAuthenticated()]
   
   def get(self, request):
@@ -34,7 +34,7 @@ class EventDetailView(APIView):
  
   def get_permissions(self):
     if self.request.method != 'GET':
-      return [IsAuthenticated(), IsAdminOrSuperUser()]
+      return [IsAuthenticated(), IsOwnerOrAdminOrSuperUser()]
     return [AllowAny()]
   
   def get_object(self, pk):
