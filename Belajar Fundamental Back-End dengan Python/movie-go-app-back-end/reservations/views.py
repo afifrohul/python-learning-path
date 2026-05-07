@@ -4,10 +4,10 @@ from rest_framework.views import APIView
 from .models import Reservation, ReservedSeat
 from reservations.serializers import ReservationSerializer, ReservedSeatSerializer
 from django.http import Http404
-from core.permissions import IsAdminOrSuperUser, IsOwnerOrAdminOrSuperUser
+from core.permissions import IsOwnerOrAdminOrSuperUser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
-
+from .tasks import send_ticket_email
 
 # Create your views here.
 class ReservationListCreateView(APIView):
@@ -23,7 +23,12 @@ class ReservationListCreateView(APIView):
     def post(self, request):
         serializer = ReservationSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            reservation = serializer.save()
+            send_ticket_email.delay(
+                reservation.user.email,
+                reservation.user.username,
+                reservation.id
+            )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
