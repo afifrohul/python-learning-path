@@ -23,7 +23,7 @@ class Movie(models.Model):
 class MoviePoster(models.Model):
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable=False)
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
-    image = models.ImageField()
+    image = models.ImageField(upload_to='public/movie_posters/')
  
     def __str__(self):
         return self.movie.name
