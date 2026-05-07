@@ -2,7 +2,7 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
-
+from loguru import logger
 
 def main():
     """Run administrative tasks."""
@@ -16,6 +16,17 @@ def main():
             "forget to activate a virtual environment?"
         ) from exc
     execute_from_command_line(sys.argv)
+
+    logger.remove()  # hapus handler bawaan
+    logger.add(sys.stdout, level="INFO")  # log ke console
+    logger.add("logs/error.log",
+            rotation="500 MB",  # rotasi file jika mencapai 500 MB)
+            level="ERROR",  # hanya log level error
+            backtrace=True,
+            diagnose=True)  #
+    logger.add("logs/app.log",
+            rotation="1 day",  # rotasi harian
+            level="INFO") # hanya log level info
 
 
 if __name__ == '__main__':

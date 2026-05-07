@@ -14,6 +14,7 @@ from minio import Minio
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.core.cache import cache
 from rest_framework.renderers import JSONRenderer, json
+from loguru import logger
  
 # Create your views here.
 def get_minio_client():
@@ -64,6 +65,7 @@ class MovieListCreateView(APIView):
         response['X-Data-Source'] = data_source
         return response
     def post(self, request):
+        logger.info("Creating a new movie with data: {}", request.data)
         serializer = MovieSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -94,6 +96,7 @@ class MovieDetailView(APIView):
         return Response(serializer.data)
  
     def put(self, request, pk):
+        logger.info("Updating movie with ID {} with data: {}", pk, request.data)
         movie = self.get_object(pk)
         serializer = MovieSerializer(movie, data=request.data)
         if serializer.is_valid():
@@ -102,6 +105,7 @@ class MovieDetailView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
  
     def delete(self, request, pk):
+        logger.info("Deleting movie with ID {}", pk)
         movie = self.get_object(pk)
         movie.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "42e0ba59478a16423a3b955e737a7860b9f0ae63cba621af8fb9d2439e3d28c5"
+            "sha256": "dcc4f14afb35d104057c3b8fcfcdd3cf428bd4c76a317acf6fc255bf73070a66"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -277,6 +277,15 @@
             ],
             "markers": "python_version >= '3.9'",
             "version": "==5.6.2"
+        },
+        "loguru": {
+            "hashes": [
+                "sha256:19480589e77d47b8d85b2c827ad95d49bf31b0dcde16593892eb51dd18706eb6",
+                "sha256:31a33c10c8e1e10422bfd431aeb5d351c7cf7fa671e3c4df004162264b28220c"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.5' and python_version < '4.0'",
+            "version": "==0.7.3"
         },
         "minio": {
             "hashes": [
