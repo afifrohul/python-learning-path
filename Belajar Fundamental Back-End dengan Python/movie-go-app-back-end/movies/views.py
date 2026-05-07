@@ -12,8 +12,22 @@ import tempfile
 import os
 from minio import Minio
 from rest_framework.parsers import MultiPartParser, FormParser
+from django.core.cache import cache
+from rest_framework.renderers import JSONRenderer, json
  
 # Create your views here.
+def get_minio_client():
+    return Minio(
+        endpoint=os.getenv('MINIO_ENDPOINT_URL'),
+        access_key=os.getenv('MINIO_ACCESS_KEY'),
+        secret_key=os.getenv('MINIO_SECRET_KEY'),
+        secure=False
+    )
+ 
+bucket_name = os.getenv('MINIO_BUCKET_NAME')
+
+CACHE_KEY_LIST = "movie_list"
+CACHE_KEY_DETAIL = "movie_detail_{}"
 class MovieListCreateView(APIView):
 
     authentication_classes = [JWTAuthentication]
@@ -24,14 +38,36 @@ class MovieListCreateView(APIView):
         return [IsAuthenticated()]
 
     def get(self, request):
-        movies = Movie.objects.all().order_by('name')[:10]
-        serializer = MovieSerializer(movies, many=True)
-        return Response({'movies': serializer.data})
+        movies = cache.get(CACHE_KEY_LIST)
  
+        # Jika tidak ada di cache, ambil dari database
+        if not movies:
+            print("Data diambil dari database...")
+            data = Movie.objects.all().order_by('name')[:10]
+            cache.get(CACHE_KEY_LIST)
+            serializer = MovieSerializer(data, many=True)
+ 
+            # Serialisasi data ke JSON string
+            movies_data = JSONRenderer().render(serializer.data)
+ 
+            # Simpan di Redis selama 15 menit
+            cache.set(CACHE_KEY_LIST, movies_data, timeout=60 * 15)
+ 
+            movies = movies_data
+            data_source = "database"
+        else:
+            print("Data diambil dari cache...")
+            data_source = "cache"
+ 
+        # Kembalikan hasil response dalam bentuk JSON
+        response = Response({'movies': json.loads(movies)})
+        response['X-Data-Source'] = data_source
+        return response
     def post(self, request):
         serializer = MovieSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
+            cache.delete(CACHE_KEY_LIST)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
  
@@ -69,16 +105,6 @@ class MovieDetailView(APIView):
         movie = self.get_object(pk)
         movie.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-def get_minio_client():
-    return Minio(
-        endpoint=os.getenv('MINIO_ENDPOINT_URL'),
-        access_key=os.getenv('MINIO_ACCESS_KEY'),
-        secret_key=os.getenv('MINIO_SECRET_KEY'),
-        secure=False
-    )
- 
-bucket_name = os.getenv('MINIO_BUCKET_NAME')
 
 class MoviePosterView(APIView):
     authentication_classes = [JWTAuthentication]

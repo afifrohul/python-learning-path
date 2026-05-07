@@ -12,6 +12,7 @@ djangorestframework-simplejwt = "*"
 minio = "*"
 pillow = "*"
 django-cors-headers = "*"
+redis = "*"
 
 [dev-packages]
 
