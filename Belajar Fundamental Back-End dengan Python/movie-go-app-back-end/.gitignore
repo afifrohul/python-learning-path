@@ -13,3 +13,5 @@ showtimes/__pycache__
 showtimes/migrations/__pycache__
 reservations/__pycache__
 reservations/migrations/__pypycache__
+public
+logs

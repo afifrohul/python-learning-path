@@ -15,6 +15,7 @@ django-cors-headers = "*"
 redis = "*"
 celery = "*"
 loguru = "*"
+sentry-sdk = "*"
 
 [dev-packages]
 
