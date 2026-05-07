@@ -11,6 +11,7 @@ psycopg = {extras = ["binary"], version = "*"}
 djangorestframework-simplejwt = "*"
 minio = "*"
 pillow = "*"
+django-cors-headers = "*"
 
 [dev-packages]
 
