@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from .models import Reservation, ReservedSeat
 from reservations.serializers import ReservationSerializer, ReservedSeatSerializer
 from django.http import Http404
-from core.permissions import IsAdminOrSuperUser
+from core.permissions import IsAdminOrSuperUser, IsOwnerOrAdminOrSuperUser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
@@ -33,7 +33,7 @@ class ReservationDetailView(APIView):
  
     def get_permissions(self):
         if self.request.method != 'GET':
-            return [IsAuthenticated(), IsAdminOrSuperUser()]
+            return [IsAuthenticated(), IsOwnerOrAdminOrSuperUser()]
         return [IsAuthenticated()]
     
     def get_object(self, pk):
@@ -83,7 +83,7 @@ class ReservedSeatDetailView(APIView):
  
     def get_permissions(self):
         if self.request.method != 'GET':
-            return [IsAuthenticated(), IsAdminOrSuperUser()]
+            return [IsAuthenticated(), IsOwnerOrAdminOrSuperUser()]
         return [IsAuthenticated()]
     
     def get_object(self, pk):

@@ -6,7 +6,6 @@ from django.contrib.auth.models import Group
  
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     _links = serializers.SerializerMethodField()
-    # groups = serializers.SerializerMethodField(write_only=False)
  
     class Meta:
         model = User

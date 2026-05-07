@@ -53,10 +53,21 @@ class IsOwnerOrAdminOrSuperUser(BasePermission):
     Allows access to the owner of the object, admin, and superusers.
     """
     def has_object_permission(self, request, view, obj):
+
+        is_owner = False
+
+        if hasattr(obj, 'user'):
+            is_owner = obj.user == request.user
+
+        elif hasattr(obj, 'reservation'):
+            is_owner = obj.reservation.user == request.user
+
         return (
-            request.user and request.user.is_authenticated and (
-                request.user.is_superuser or
-                request.user.groups.filter(name='admin').exists() or
-                obj.user == request.user
+            request.user
+            and request.user.is_authenticated
+            and (
+                request.user.is_superuser
+                or request.user.groups.filter(name='admin').exists()
+                or is_owner
             )
         )

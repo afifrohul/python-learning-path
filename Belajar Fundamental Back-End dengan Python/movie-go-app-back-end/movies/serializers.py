@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from rest_framework.reverse import reverse
-from .models import Movie
+from .models import Movie, MoviePoster
  
 class MovieSerializer(serializers.HyperlinkedModelSerializer):
     _links = serializers.SerializerMethodField()
@@ -38,3 +38,14 @@ class MovieSerializer(serializers.HyperlinkedModelSerializer):
                 "types": ["application/json"]
             }
         ]
+
+class MoviePosterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MoviePoster
+        fields = ['id', 'movie', 'image']
+ 
+    def validate_image(self, value):
+        max_size = 2 * 1024 * 1024  # 2MB
+        if value.size > max_size:
+            raise serializers.ValidationError("Image size cannot exceed 2MB.")
+        return value

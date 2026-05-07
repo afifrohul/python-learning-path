@@ -9,6 +9,8 @@ djangorestframework = "*"
 python-dotenv = "*"
 psycopg = {extras = ["binary"], version = "*"}
 djangorestframework-simplejwt = "*"
+minio = "*"
+pillow = "*"
 
 [dev-packages]
 
