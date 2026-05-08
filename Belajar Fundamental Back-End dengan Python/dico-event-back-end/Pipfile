@@ -13,6 +13,7 @@ pillow = "*"
 minio = "*"
 redis = "*"
 celery = "*"
+loguru = "*"
 
 [dev-packages]
 

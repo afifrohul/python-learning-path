@@ -14,6 +14,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from django.core.cache import cache
 from rest_framework.renderers import JSONRenderer, json
 from django.shortcuts import get_object_or_404
+from loguru import logger
 
 # Create your views here.
 def get_minio_client():
@@ -65,6 +66,7 @@ class EventListCreateView(APIView):
     return response
   
   def post(self, request):
+    logger.info("Creating a new event with data: {}", request.data)
     serialier = EventSerializer(data=request.data)
     if serialier.is_valid():
       serialier.save()
@@ -111,6 +113,7 @@ class EventDetailView(APIView):
     return response
   
   def put(self, request, pk):
+    logger.info("Updating event with ID {} with data: {}", pk, request.data)
     event = self.get_object(pk)
     serializer = EventSerializer(event, data=request.data)
     if serializer.is_valid():
@@ -120,6 +123,7 @@ class EventDetailView(APIView):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
   
   def delete(self, request, pk):
+    logger.info("Deleting event with ID {}", pk)
     event = self.get_object(pk)
     event.delete()
     cache.delete(CACHE_KEY_LIST)
