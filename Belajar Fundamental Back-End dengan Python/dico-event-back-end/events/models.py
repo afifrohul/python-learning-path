@@ -23,3 +23,15 @@ class Event(models.Model):
   def __str__(self):
     return f'{self.events.name}'
   
+class EventPoster(models.Model):
+  id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable=False)
+  event = models.ForeignKey(Event, on_delete=models.CASCADE)
+  image = models.ImageField(upload_to='public/event_posters/')
+  created_at = models.DateTimeField(auto_now_add=True)
+  updated_at = models.DateTimeField(auto_now=True)
+
+  def __str__(self):
+    return self.event.name
+  
+  class Meta:
+    db_table = 'event_posters'

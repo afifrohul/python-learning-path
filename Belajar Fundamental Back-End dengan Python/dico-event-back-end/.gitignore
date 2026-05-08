@@ -1,0 +1,17 @@
+.env
+.idea
+dico_event/__pycache__
+dico_event_be/__pycache__
+dico_event_be/migrations/__pycache__
+events/__pycache__
+events/migrations/__pycache__
+studios/__pycache__
+studios/migrations/__pycache__
+seats/__pycache__
+seats/migrations/__pycache__
+showtimes/__pycache__
+showtimes/migrations/__pycache__
+reservations/__pycache__
+reservations/migrations/__pypycache__
+public
+logs
