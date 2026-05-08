@@ -12,6 +12,7 @@ psycopg = {extras = ["binary"], version = "*"}
 pillow = "*"
 minio = "*"
 redis = "*"
+celery = "*"
 
 [dev-packages]
 

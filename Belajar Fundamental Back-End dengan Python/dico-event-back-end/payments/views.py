@@ -7,6 +7,7 @@ from django.http import Http404
 from .models import Payment
 from .serializers import PaymentSerializer
 from core.permissions import IsAdminOrSuperUser
+from .tasks import send_payment_success_email
 
 # Create your views here.
 class PaymentListCreateView(APIView):
@@ -52,10 +53,22 @@ class PaymentDetailView(APIView):
   
   def put(self, request, pk):
     payment = self.get_object(pk)
+
     serializer = PaymentSerializer(payment, data=request.data)
+
     if serializer.is_valid():
-      serializer.save()
+      payment = serializer.save()
+
+      if request.data.get('payment_status') == 'completed':
+        send_payment_success_email.delay(
+          payment.registration.user.email,
+          payment.registration.user.username,
+          payment.registration.id,
+          payment.registration.ticket.event.name
+        )
+
       return Response(serializer.data)
+
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
   
   def delete(self, request, pk):

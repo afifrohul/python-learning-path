@@ -7,6 +7,7 @@ from django.http import Http404
 from .models import Registration
 from .serializers import RegistrationSerializer
 from core.permissions import IsAdminOrSuperUser
+from .tasks import send_ticket_email
 
 # Create your views here.
 class RegistrationListCreateView(APIView):
@@ -25,7 +26,8 @@ class RegistrationListCreateView(APIView):
   def post(self, request):
     serialier = RegistrationSerializer(data=request.data)
     if serialier.is_valid():
-      serialier.save()
+      registration =  serialier.save()
+      send_ticket_email.delay(registration.user.email, registration.user.username, registration.id, registration.ticket.event.name)
       return Response(serialier.data, status=status.HTTP_201_CREATED)
     return Response(serialier.errors, status=status.HTTP_400_BAD_REQUEST)
   
