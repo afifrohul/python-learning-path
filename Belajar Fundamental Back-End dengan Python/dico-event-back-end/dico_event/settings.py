@@ -148,3 +148,10 @@ AUTH_USER_MODEL = 'core.User'
 SIMPLE_JWT = {
   "ACCESS_TOKEN_LIFETIME": timedelta(minutes=180),
 }
+
+CACHES = {
+   "default": {
+       "BACKEND": "django.core.cache.backends.redis.RedisCache",
+       "LOCATION": os.getenv('REDIS_HOST'),
+   }
+}
