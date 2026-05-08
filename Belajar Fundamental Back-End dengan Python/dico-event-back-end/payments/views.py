@@ -7,7 +7,8 @@ from django.http import Http404
 from .models import Payment
 from .serializers import PaymentSerializer
 from core.permissions import IsAdminOrSuperUser
-from .tasks import send_payment_success_email
+from .tasks import send_payment_success_email, send_event_reminder_email
+from datetime import timedelta
 
 # Create your views here.
 class PaymentListCreateView(APIView):
@@ -65,6 +66,20 @@ class PaymentDetailView(APIView):
           payment.registration.user.username,
           payment.registration.id,
           payment.registration.ticket.event.name
+        )
+
+        # Schedule reminder
+        event_time = payment.registration.ticket.event.start_time
+
+        reminder_time = event_time - timedelta(hours=2)
+
+        send_event_reminder_email.apply_async(
+          args=[
+            payment.registration.user.email,
+            payment.registration.user.username,
+            payment.registration.ticket.event.name
+          ],
+          eta=reminder_time
         )
 
       return Response(serializer.data)
